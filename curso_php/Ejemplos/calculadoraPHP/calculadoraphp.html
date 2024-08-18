@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora con PHP</title>
+    <link rel="stylesheet" href="calculadoraphp.css">
+</head>
+<body>
+    <div class="calculator">
+        <form method="POST" action="calculadora.php">
+            <!-- Mostrar el valor calculado o ingresado en la pantalla de la calculadora -->
+            <input type="text" id="display" name="display" value="<?php echo isset($display) ? htmlspecialchars($display) : ''; ?>" readonly>
+            <div class="buttons">
+                <button type="submit" name="action" value="clear" class="btn">C</button>
+                <button type="submit" name="action" value="/" class="btn">/</button>
+                <button type="submit" name="action" value="*" class="btn">*</button>
+                <button type="submit" name="action" value="del" class="btn">DEL</button>
+
+                <button type="submit" name="action" value="7" class="btn">7</button>
+                <button type="submit" name="action" value="8" class="btn">8</button>
+                <button type="submit" name="action" value="9" class="btn">9</button>
+                <button type="submit" name="action" value="-" class="btn">-</button>
+
+                <button type="submit" name="action" value="4" class="btn">4</button>
+                <button type="submit" name="action" value="5" class="btn">5</button>
+                <button type="submit" name="action" value="6" class="btn">6</button>
+                <button type="submit" name="action" value="+" class="btn">+</button>
+
+                <button type="submit" name="action" value="1" class="btn">1</button>
+                <button type="submit" name="action" value="2" class="btn">2</button>
+                <button type="submit" name="action" value="3" class="btn">3</button>
+                <button type="submit" name="action" value="=" class="btn">=</button>
+
+                <button type="submit" name="action" value="0" class="btn btn-zero">0</button>
+                <button type="submit" name="action" value="." class="btn">.</button>
+            </div>
+        </form>
+    </div>
+
+    <?php
+    // Inicializar variables
+    $display = '';
+
+    // Procesar la acción cuando se envía el formulario
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $display = isset($_POST['display']) ? $_POST['display'] : '';
+        $action = $_POST['action'];
+
+        // Manejar diferentes acciones
+        switch ($action) {
+            case 'clear':
+                $display = '';
+                break;
+            case 'del':
+                $display = substr($display, 0, -1);
+                break;
+            case '=':
+                // Evaluar la expresión matemática de manera segura
+                try {
+                    $evalResult = eval("return $display;");
+                    $display = $evalResult;
+                } catch (Throwable $e) {
+                    $display = "Error";
+                }
+                break;
+            default:
+                $display .= $action;
+                break;
+        }
+    }
+    ?>
+</body>
+</html>
